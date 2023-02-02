@@ -1,6 +1,6 @@
 # i28511.Hattrick.OAuth
 
-This class library provides an OAuth implementation for the Hattrick CHPP XML API.
+This class library provides an easy-to-use implementation of OAuth authentication and authorization for the Hattrick CHPP XML API. It leverages the power of Microsoft's Dependency Injection framework to allow developers to add OAuth functionality to their applications with minimal code and configuration. The library is compatible with .NET 7.0 and Microsoft.Extensions.DependencyInjection.Abstractions, making it a great choice for modern .NET applications. With this library, you can authenticate and authorize your requests to the Hattrick API with just a few lines of code, making it an indispensable tool for anyone working with this API.
 
 ## Installation
 
