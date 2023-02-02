@@ -84,16 +84,39 @@
             The token secret.
             </value>
         </member>
+        <member name="T:i28511.Hattrick.OAuth.OAuthServiceConfiguration">
+            <summary>
+            Represents the configuration for the OAuth service.
+            </summary>
+        </member>
+        <member name="P:i28511.Hattrick.OAuth.OAuthServiceConfiguration.ConsumerKey">
+            <summary>
+            Gets or sets the unique identifier for the application that is using the OAuth service.
+            It is provided by the OAuth provider.
+            </summary>
+        </member>
+        <member name="P:i28511.Hattrick.OAuth.OAuthServiceConfiguration.ConsumerSecret">
+            <summary>
+            Gets or sets the secret key that is used to authenticate the application that is using the OAuth service.
+            It is provided by the OAuth provider.
+            </summary>
+        </member>
+        <member name="P:i28511.Hattrick.OAuth.OAuthServiceConfiguration.CallbackUrl">
+            <summary>
+            Gets or sets the URL that the OAuth provider will redirect to after the user has authorized the application.
+            </summary>
+        </member>
         <member name="T:i28511.Hattrick.OAuth.ServiceCollectionExtensions">
             <summary>
             Extension methods for <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> to configure OAuth-related services.
             </summary>
         </member>
-        <member name="M:i28511.Hattrick.OAuth.ServiceCollectionExtensions.AddHattrickOAuth(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+        <member name="M:i28511.Hattrick.OAuth.ServiceCollectionExtensions.AddHattrickOAuth(Microsoft.Extensions.DependencyInjection.IServiceCollection,i28511.Hattrick.OAuth.OAuthServiceConfiguration)">
             <summary>
             Adds the OAuth-related services to the service collection.
             </summary>
             <param name="services">The service collection to configure.</param>
+            <param name="configuration">The configuration for the OAuth service.</param>
             <returns>The configured service collection.</returns>
         </member>
         <member name="T:i28511.Hattrick.OAuth.Service.IOAuthService">
@@ -102,21 +125,23 @@
             </summary>
             <seealso cref="T:i28511.Hattrick.OAuth.Service.IOAuthService" />
         </member>
-        <member name="M:i28511.Hattrick.OAuth.Service.IOAuthService.RequestTokenAsync">
+        <member name="M:i28511.Hattrick.OAuth.Service.IOAuthService.RequestTokenAsync(System.Threading.CancellationToken)">
             <summary>
             Asynchronously requests an OAuth token from the server.
             </summary>
+            <param name="ct">The cancellation token used to cancel the operation.</param>
             <returns>An <see cref="T:i28511.Hattrick.OAuth.Models.OAuthRequestResult"/> containing the authorize URL and token secret.</returns>
             <exception cref="T:i28511.Hattrick.OAuth.Models.OAuthException">Thrown when there is an error with the OAuth request.</exception>
             <exception cref="T:System.Exception">Thrown when there is an unexpected error while requesting the OAuth token.</exception>
         </member>
-        <member name="M:i28511.Hattrick.OAuth.Service.IOAuthService.AuthorizeAsync(System.String,System.String,System.String)">
+        <member name="M:i28511.Hattrick.OAuth.Service.IOAuthService.AuthorizeAsync(System.String,System.String,System.String,System.Threading.CancellationToken)">
             <summary>
             Authorize the OAuth request using the provided token, verifier, and secret.
             </summary>
             <param name="token">The OAuth token.</param>
             <param name="verifier">The OAuth verifier.</param>
             <param name="secret">The OAuth secret.</param>
+            <param name="ct">The cancellation token used to cancel the operation.</param>
             <returns>The OAuth authorize result.</returns>
             <exception cref="T:i28511.Hattrick.OAuth.Models.OAuthException">Thrown when an error occurs while authorizing the OAuth request.</exception>
             <exception cref="T:System.Exception">Thrown when an unexpected error occurs while authorizing the OAuth request.</exception>
@@ -179,37 +204,29 @@
             The HTTP client is used to make HTTP requests to the OAuth provider.
             </summary>
         </member>
-        <member name="M:i28511.Hattrick.OAuth.Service.OAuthService.#ctor(Microsoft.Extensions.Logging.ILogger{i28511.Hattrick.OAuth.Service.IOAuthService},System.String,System.String,System.String)">
+        <member name="M:i28511.Hattrick.OAuth.Service.OAuthService.#ctor(i28511.Hattrick.OAuth.OAuthServiceConfiguration)">
             <summary>
             Initializes a new instance of the <see cref="T:i28511.Hattrick.OAuth.Service.OAuthService"/> class.
             </summary>
-            <param name="logger">logger is an instance of a class that implements the ILogger interface.
-            It is used to log errors and messages for debugging and troubleshooting purposes.
-            </param>
-            <param name="consumerKey">consumerKey is the unique identifier for the application that is using the OAuth service.
-            It is provided by the OAuth provider.
-            </param>
-            <param name="consumerSecret">consumerSecret is the secret key that is used to authenticate the application that is using the OAuth service.
-            It is provided by the OAuth provider.
-            </param>
-            <param name="callbackUrl">callbackUrl is the URL that the OAuth provider will redirect to after the user has authorized the application.
-            </param>
+            <param name="config">The configuration object that contains the required parameters for the OAuth service</param>
         </member>
-        <member name="M:i28511.Hattrick.OAuth.Service.OAuthService.AuthorizeAsync(System.String,System.String,System.String)">
+        <member name="M:i28511.Hattrick.OAuth.Service.OAuthService.AuthorizeAsync(System.String,System.String,System.String,System.Threading.CancellationToken)">
             <summary>
             Authorize the OAuth request using the provided token, verifier, and secret.
             </summary>
             <param name="token">The OAuth token.</param>
             <param name="verifier">The OAuth verifier.</param>
             <param name="secret">The OAuth secret.</param>
+            <param name="ct">The cancellation token used to cancel the operation.</param>
             <returns>The OAuth authorize result.</returns>
             <exception cref="T:i28511.Hattrick.OAuth.Models.OAuthException">Thrown when an error occurs while authorizing the OAuth request.</exception>
             <exception cref="T:System.Exception">Thrown when an unexpected error occurs while authorizing the OAuth request.</exception>
         </member>
-        <member name="M:i28511.Hattrick.OAuth.Service.OAuthService.RequestTokenAsync">
+        <member name="M:i28511.Hattrick.OAuth.Service.OAuthService.RequestTokenAsync(System.Threading.CancellationToken)">
             <summary>
             Asynchronously requests an OAuth token from the server.
             </summary>
+            <param name="ct">The cancellation token used to cancel the operation.</param>
             <returns>An <see cref="T:i28511.Hattrick.OAuth.Models.OAuthRequestResult"/> containing the authorize URL and token secret.</returns>
             <exception cref="T:i28511.Hattrick.OAuth.Models.OAuthException">Thrown when there is an error with the OAuth request.</exception>
             <exception cref="T:System.Exception">Thrown when there is an unexpected error while requesting the OAuth token.</exception>

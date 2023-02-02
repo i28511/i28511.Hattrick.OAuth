@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using i28511.Hattrick.OAuth.Models;
 using OAuth;
@@ -52,10 +53,11 @@ internal class OAuthService : IOAuthService
     /// <param name="token">The OAuth token.</param>
     /// <param name="verifier">The OAuth verifier.</param>
     /// <param name="secret">The OAuth secret.</param>
+    /// <param name="ct">The cancellation token used to cancel the operation.</param>
     /// <returns>The OAuth authorize result.</returns>
     /// <exception cref="OAuthException">Thrown when an error occurs while authorizing the OAuth request.</exception>
     /// <exception cref="Exception">Thrown when an unexpected error occurs while authorizing the OAuth request.</exception>
-    public async Task<OAuthAuthorizeResult> AuthorizeAsync(string token, string verifier, string secret)
+    public async Task<OAuthAuthorizeResult> AuthorizeAsync(string token, string verifier, string secret, CancellationToken ct)
     {
         try
         {
@@ -74,7 +76,7 @@ internal class OAuthService : IOAuthService
 
             var auth = client.GetAuthorizationQuery();
             var uriBuilder = new UriBuilder(client.RequestUrl) { Query = auth };
-            var response = await _httpClient.GetAsync(uriBuilder.Uri);
+            var response = await _httpClient.GetAsync(uriBuilder.Uri, ct);
 
             if (!response.IsSuccessStatusCode || response.RequestMessage?.RequestUri is null)
             {
@@ -88,7 +90,8 @@ internal class OAuthService : IOAuthService
                 throw new OAuthException(error);
             }
 
-            var queryParams = System.Web.HttpUtility.ParseQueryString(response.RequestMessage.RequestUri.Query);
+            var responseAsString = await response.Content.ReadAsStringAsync(ct);
+            var queryParams = System.Web.HttpUtility.ParseQueryString(responseAsString);
 
             var accessToken = queryParams["oauth_token"];
             var accessTokenSecret = queryParams["oauth_token_secret"];
@@ -135,10 +138,11 @@ internal class OAuthService : IOAuthService
     /// <summary>
     /// Asynchronously requests an OAuth token from the server.
     /// </summary>
+    /// <param name="ct">The cancellation token used to cancel the operation.</param>
     /// <returns>An <see cref="OAuthRequestResult"/> containing the authorize URL and token secret.</returns>
     /// <exception cref="OAuthException">Thrown when there is an error with the OAuth request.</exception>
     /// <exception cref="Exception">Thrown when there is an unexpected error while requesting the OAuth token.</exception>
-    public async Task<OAuthRequestResult> RequestTokenAsync()
+    public async Task<OAuthRequestResult> RequestTokenAsync(CancellationToken ct)
     {
         try
         {
@@ -159,10 +163,10 @@ internal class OAuthService : IOAuthService
             var auth = client.GetAuthorizationQuery();
 
             var uriBuilder = new UriBuilder(client.RequestUrl) { Query = auth };
-            var response = await _httpClient.GetAsync(uriBuilder.Uri);
+            var response = await _httpClient.GetAsync(uriBuilder.Uri, ct);
+            
 
-
-            if (!response.IsSuccessStatusCode || response.RequestMessage?.RequestUri is null)
+            if (!response.IsSuccessStatusCode || response.Content is null)
             {
 
                 var error = new OAuthError
@@ -174,7 +178,8 @@ internal class OAuthService : IOAuthService
                 throw new OAuthException(error);
             }
 
-            var queryParams = System.Web.HttpUtility.ParseQueryString(response.RequestMessage.RequestUri.Query);
+            var responseAsString = await response.Content.ReadAsStringAsync(ct);
+            var queryParams = System.Web.HttpUtility.ParseQueryString(responseAsString);
             
             var oAuthToken = queryParams["oauth_token"];
             var oauthTokenSecret = queryParams["oauth_token_secret"];
