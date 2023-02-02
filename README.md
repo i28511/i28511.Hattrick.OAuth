@@ -10,30 +10,6 @@ You can install the library via NuGet by running the following command in the Pa
 Install-Package i28511.Hattrick.OAuth
 ```
 
-## Usage
-
-To use the library, you will need to add the following line to your `Startup.cs` file:
-
-```csharp
-services.AddHattrickOAuth();
-```
-
-This will add the `IOAuthService` and `OAuthService` to your service collection.
-
-You will also need to configure the OAuth settings in your `appsettings.json` file. An example configuration is provided below:
-
-```json
-{
-	"OAuth": {
-		"ClientId": "YOUR_CLIENT_ID",
-		"ClientSecret": "YOUR_CLIENT_SECRET"
-	}
-}
-```
-
-
-You can then inject the `IOAuthService` into your controllers or services and use it to authenticate and authorize requests to the Hattrick API.
-
 ## Service Collection Extension Method
 
 ```csharp
@@ -54,7 +30,41 @@ namespace Microsoft.Extensions.DependencyInjection
 }
 ```
 
-This Service Collection Extension Method allows user to add the Hattrick OAuth implementation in a single line in their Startup.cs file making it more readable and easy to understand.
+This Service Collection Extension Method allows user to add the Hattrick OAuth implementation in a single line in their Startup.cs file making it more readable and easy to understand, while also providing the ability to pass in a OAuthServiceConfiguration object to configure the OAuth service.
+
+
+## Usage Example
+
+To use the library, you will need to add the following line to your `Startup.cs` file:
+
+```csharp
+OAuthServiceConfiguration oauthConfig = new OAuthServiceConfiguration
+{
+    ConsumerKey = Configuration.GetValue<string>("OAuth:ClientId"),
+    ConsumerSecret = Configuration.GetValue<string>("OAuth:ClientSecret"),
+    CallbackUrl = new Uri(Configuration.GetValue<string>("OAuth:CallbackUrl"))
+};
+services.AddHattrickOAuth(oauthConfig);
+```
+
+This will add the IOAuthService and OAuthService to your service collection with the given configuration.
+
+You will also need to configure the OAuth settings in your appsettings.json file. An example configuration is provided below:
+
+
+```json
+{
+	"OAuth": {
+		"ClientId": "YOUR_CLIENT_ID",
+		"ClientSecret": "YOUR_CLIENT_SECRET",
+		"CallbackUrl": "YOUR_CALLBACK_URL"
+	}
+}
+
+```
+
+You can then inject the `IOAuthService` into your controllers or services and use it to authenticate and authorize requests to the Hattrick API.
+
 
 ## Compatibility
 
