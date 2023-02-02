@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "i28511.Hattrick.OAuth", "i28511.Hattrick.OAuth.csproj", "{CC3CF281-2FF1-4376-9907-B45095639418}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "i28511.Hattrick.OAuth.Tests", "..\i28511.Hattrick.OAuth.Tests\i28511.Hattrick.OAuth.Tests.csproj", "{3310628F-4967-454C-9988-CEED58393FC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{CC3CF281-2FF1-4376-9907-B45095639418}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC3CF281-2FF1-4376-9907-B45095639418}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC3CF281-2FF1-4376-9907-B45095639418}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3310628F-4967-454C-9988-CEED58393FC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3310628F-4967-454C-9988-CEED58393FC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3310628F-4967-454C-9988-CEED58393FC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3310628F-4967-454C-9988-CEED58393FC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -26,7 +26,7 @@ internal class OAuthService : IOAuthService
     /// <summary>
     /// The callback URL is the URL that the OAuth provider will redirect to after the user has authorized the application.
     /// </summary>
-    private readonly string _callbackUrl;
+    private readonly Uri _callbackUrl;
     /// <summary>
     /// The HTTP client is used to make HTTP requests to the OAuth provider.
     /// </summary>
@@ -35,21 +35,15 @@ internal class OAuthService : IOAuthService
     /// <summary>
     /// Initializes a new instance of the <see cref="OAuthService"/> class.
     /// </summary>
-    /// <param name="consumerKey">consumerKey is the unique identifier for the application that is using the OAuth service.
-    /// It is provided by the OAuth provider.
-    /// </param>
-    /// <param name="consumerSecret">consumerSecret is the secret key that is used to authenticate the application that is using the OAuth service.
-    /// It is provided by the OAuth provider.
-    /// </param>
-    /// <param name="callbackUrl">callbackUrl is the URL that the OAuth provider will redirect to after the user has authorized the application.
-    /// </param>
-    public OAuthService(string consumerKey, string consumerSecret, string callbackUrl)
+    /// <param name="config">The configuration object that contains the required parameters for the OAuth service</param>
+    public OAuthService(OAuthServiceConfiguration config)
     {
-        _consumerKey = consumerKey;
-        _consumerSecret = consumerSecret;
-        _callbackUrl = callbackUrl;
+        _consumerKey = config.ConsumerKey;
+        _consumerSecret = config.ConsumerSecret;
+        _callbackUrl = config.CallbackUrl;
         _httpClient = new HttpClient();
     }
+
 
 
     /// <summary>
@@ -157,7 +151,7 @@ internal class OAuthService : IOAuthService
                 ConsumerSecret = _consumerSecret,
                 RequestUrl = OAuthPath.RequestTokenPath,
                 Version = "1.0",
-                CallbackUrl = _callbackUrl
+                CallbackUrl = _callbackUrl.AbsoluteUri
             };
 
             // Using URL query authorization
