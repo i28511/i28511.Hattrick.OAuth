@@ -18,9 +18,11 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        ///  Add the Hattrick OAuth implementation to the service collection
+        /// Adds the OAuth-related services to the service collection.
         /// </summary>
-        /// <param name="services">The service collection</param>
+        /// <param name="services">The service collection to configure.</param>
+        /// <param name="configuration">The configuration for the OAuth service.</param>
+        /// <returns>The configured service collection.</returns>
         public static IServiceCollection AddHattrickOAuth(this IServiceCollection services, OAuthServiceConfiguration configuration)
         {
             // Adds the OAuth service to the service collection as a scoped service with the given configuration.
