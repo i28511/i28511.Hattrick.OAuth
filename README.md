@@ -59,11 +59,11 @@ In case of any OAuth errors, the methods may throw an OAuthException exception, 
 ## OAuth Scopes
 The library implements the following scopes to authorize requests to the Hattrick API:
 
-manage_challenges
-set_matchorder
-manage_youthplayers
-set_training
-place_bid
+- manage_challenges
+- set_matchorder
+- manage_youthplayers
+- set_training
+- place_bid
 
 
 ## Compatibility
