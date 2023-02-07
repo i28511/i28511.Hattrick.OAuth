@@ -17,7 +17,7 @@ namespace i28511.Hattrick.OAuth
         public static IServiceCollection AddHattrickOAuth(this IServiceCollection services, OAuthServiceConfiguration configuration)
         {
             // Adds the OAuth service to the service collection as a scoped service with the given configuration.
-            services.AddScoped<IOAuthService, OAuthService>(sp => new OAuthService(configuration));
+            services.AddScoped<IOAuthService, OAuthService>(_ => new OAuthService(configuration));
 
             return services;
         }
