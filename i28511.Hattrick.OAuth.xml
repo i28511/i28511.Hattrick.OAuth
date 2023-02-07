@@ -125,10 +125,11 @@
             </summary>
             <seealso cref="T:i28511.Hattrick.OAuth.Service.IOAuthService" />
         </member>
-        <member name="M:i28511.Hattrick.OAuth.Service.IOAuthService.RequestTokenAsync(System.Threading.CancellationToken)">
+        <member name="M:i28511.Hattrick.OAuth.Service.IOAuthService.RequestTokenAsync(System.Collections.Generic.IReadOnlyCollection{i28511.Hattrick.OAuth.Models.HattrickScopes},System.Threading.CancellationToken)">
             <summary>
             Asynchronously requests an OAuth token from the server.
             </summary>
+            <param name="scopes">the scopes to authorize</param>
             <param name="ct">The cancellation token used to cancel the operation.</param>
             <returns>An <see cref="T:i28511.Hattrick.OAuth.Models.OAuthRequestResult"/> containing the authorize URL and token secret.</returns>
             <exception cref="T:i28511.Hattrick.OAuth.Models.OAuthException">Thrown when there is an error with the OAuth request.</exception>
@@ -222,10 +223,11 @@
             <exception cref="T:i28511.Hattrick.OAuth.Models.OAuthException">Thrown when an error occurs while authorizing the OAuth request.</exception>
             <exception cref="T:System.Exception">Thrown when an unexpected error occurs while authorizing the OAuth request.</exception>
         </member>
-        <member name="M:i28511.Hattrick.OAuth.Service.OAuthService.RequestTokenAsync(System.Threading.CancellationToken)">
+        <member name="M:i28511.Hattrick.OAuth.Service.OAuthService.RequestTokenAsync(System.Collections.Generic.IReadOnlyCollection{i28511.Hattrick.OAuth.Models.HattrickScopes},System.Threading.CancellationToken)">
             <summary>
             Asynchronously requests an OAuth token from the server.
             </summary>
+            <param name="scopes">scopes to authorize</param>
             <param name="ct">The cancellation token used to cancel the operation.</param>
             <returns>An <see cref="T:i28511.Hattrick.OAuth.Models.OAuthRequestResult"/> containing the authorize URL and token secret.</returns>
             <exception cref="T:i28511.Hattrick.OAuth.Models.OAuthException">Thrown when there is an error with the OAuth request.</exception>

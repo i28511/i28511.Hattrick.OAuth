@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using i28511.Hattrick.OAuth.Models;
@@ -14,11 +15,12 @@ public interface IOAuthService
     /// <summary>
     /// Asynchronously requests an OAuth token from the server.
     /// </summary>
+    /// <param name="scopes">the scopes to authorize</param>
     /// <param name="ct">The cancellation token used to cancel the operation.</param>
     /// <returns>An <see cref="OAuthRequestResult"/> containing the authorize URL and token secret.</returns>
     /// <exception cref="OAuthException">Thrown when there is an error with the OAuth request.</exception>
     /// <exception cref="Exception">Thrown when there is an unexpected error while requesting the OAuth token.</exception>
-    public Task<OAuthRequestResult> RequestTokenAsync(CancellationToken ct);
+    public Task<OAuthRequestResult> RequestTokenAsync(IReadOnlyCollection<HattrickScopes> scopes, CancellationToken ct);
     /// <summary>
     /// Authorize the OAuth request using the provided token, verifier, and secret.
     /// </summary>

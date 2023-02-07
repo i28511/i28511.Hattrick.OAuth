@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,7 +48,6 @@ internal class OAuthService : IOAuthService
     }
 
 
-
     /// <summary>
     /// Authorize the OAuth request using the provided token, verifier, and secret.
     /// </summary>
@@ -73,9 +74,11 @@ internal class OAuthService : IOAuthService
                 Verifier = verifier,
                 TokenSecret = secret
             };
+            
+            var parameters = System.Web.HttpUtility.ParseQueryString(client.GetAuthorizationQuery());
+            
+            var uriBuilder = new UriBuilder(client.RequestUrl) { Query = parameters.ToString() ?? throw new InvalidOperationException() };
 
-            var auth = client.GetAuthorizationQuery();
-            var uriBuilder = new UriBuilder(client.RequestUrl) { Query = auth };
             var response = await _httpClient.GetAsync(uriBuilder.Uri, ct);
 
             if (!response.IsSuccessStatusCode || response.RequestMessage?.RequestUri is null)
@@ -138,12 +141,17 @@ internal class OAuthService : IOAuthService
     /// <summary>
     /// Asynchronously requests an OAuth token from the server.
     /// </summary>
+    /// <param name="scopes">scopes to authorize</param>
     /// <param name="ct">The cancellation token used to cancel the operation.</param>
     /// <returns>An <see cref="OAuthRequestResult"/> containing the authorize URL and token secret.</returns>
     /// <exception cref="OAuthException">Thrown when there is an error with the OAuth request.</exception>
     /// <exception cref="Exception">Thrown when there is an unexpected error while requesting the OAuth token.</exception>
-    public async Task<OAuthRequestResult> RequestTokenAsync(CancellationToken ct)
+    public async Task<OAuthRequestResult> RequestTokenAsync(IReadOnlyCollection<HattrickScopes> scopes, CancellationToken ct)
     {
+        const string invalidTokenMessage = "Failed to retreive the authentication token.";
+        const string requestErrorMessage = "An error occurred while requesting the OAuth token.";
+        const string unexpectedErrorMessage = "An unexpected error occurred while requesting the OAuth token.";
+
         try
         {
             var client = new OAuthRequest
@@ -158,71 +166,67 @@ internal class OAuthService : IOAuthService
                 CallbackUrl = _callbackUrl.AbsoluteUri
             };
 
-            // Using URL query authorization
-
             var auth = client.GetAuthorizationQuery();
-
             var uriBuilder = new UriBuilder(client.RequestUrl) { Query = auth };
+
             var response = await _httpClient.GetAsync(uriBuilder.Uri, ct);
-            
 
             if (!response.IsSuccessStatusCode || response.Content is null)
             {
-
-                var error = new OAuthError
+                throw new OAuthException(new OAuthError
                 {
                     Error = "invalid_token",
-                    ErrorDescription = "Failed to retreive the authentication token."
-                };
-
-                throw new OAuthException(error);
+                    ErrorDescription = invalidTokenMessage
+                });
             }
 
             var responseAsString = await response.Content.ReadAsStringAsync(ct);
             var queryParams = System.Web.HttpUtility.ParseQueryString(responseAsString);
-            
+
             var oAuthToken = queryParams["oauth_token"];
             var oauthTokenSecret = queryParams["oauth_token_secret"];
 
             if (oauthTokenSecret is null || oAuthToken is null)
             {
-                var error = new OAuthError
+                throw new OAuthException(new OAuthError
                 {
                     Error = "invalid_token",
-                    ErrorDescription = "Failed to retreive the authentication token."
-                };
-
-                throw new OAuthException(error);
+                    ErrorDescription = invalidTokenMessage
+                });
             }
 
-            var authorizeUrl = new UriBuilder(OAuthPath.AuthorizePath)
+            var scopeValues = scopes is null ? new List<string>() : scopes.Select(s => s.ToString().ToLowerInvariant()).ToList();
+
+            var parameters = System.Web.HttpUtility.ParseQueryString(new UriBuilder(OAuthPath.AuthorizePath)
             {
                 Query = $"oauth_token={oAuthToken}"
-            };
+            }.Query);
+
+            if (scopeValues.Count > 0)
+            {
+                parameters.Add("scope", string.Join(",", scopeValues));
+            }
 
             return new OAuthRequestResult
             {
-                AuthorizeUrl = authorizeUrl.Uri,
+                AuthorizeUrl = new UriBuilder(OAuthPath.AuthorizePath)
+                {
+                    Query = parameters.ToString() ?? throw new InvalidOperationException()
+                }.Uri,
                 TokenSecret = oauthTokenSecret
             };
         }
         catch (HttpRequestException ex)
         {
-            const string message = "An error occurred while requesting the OAuth token.";
-            // Handle network-related errors
-            throw new Exception(message, ex);
+            throw new Exception(requestErrorMessage, ex);
         }
         catch (OAuthException ex)
         {
-            const string message = "An error occurred while requesting the OAuth token:";
-            // Handle OAuth-specific errors
-            throw new Exception(message + ex.Message, ex);
+            throw new Exception(requestErrorMessage + ex.Message, ex);
         }
         catch (Exception ex)
         {
-            const string message = "An unexpected error occurred while requesting the OAuth token.";
-            // Handle unexpected errors
-            throw new Exception(message, ex);
+            throw new Exception(unexpectedErrorMessage, ex);
         }
     }
 }

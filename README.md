@@ -56,6 +56,16 @@ This method returns an OAuthAuthorizeResult object, which contains the token and
 In case of any OAuth errors, the methods may throw an OAuthException exception, with the error description provided in the exception message.
 
 
+## OAuth Scopes
+The library implements the following scopes to authorize requests to the Hattrick API:
+
+manage_challenges
+set_matchorder
+manage_youthplayers
+set_training
+place_bid
+
+
 ## Compatibility
 
 This library is compatible with the following frameworks:
