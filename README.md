@@ -10,33 +10,6 @@ You can install the library via NuGet by running the following command in the Pa
 Install-Package i28511.Hattrick.OAuth
 ```
 
-## Service Collection Extension Method
-
-```csharp
-namespace Microsoft.Extensions.DependencyInjection
-{
-    public static class ServiceCollectionExtensions
-    {
-        /// <summary>
-        /// Adds the OAuth-related services to the service collection.
-        /// </summary>
-        /// <param name="services">The service collection to configure.</param>
-        /// <param name="configuration">The configuration for the OAuth service.</param>
-        /// <returns>The configured service collection.</returns>
-        public static IServiceCollection AddHattrickOAuth(this IServiceCollection services, OAuthServiceConfiguration configuration)
-        {
-            // Adds the OAuth service to the service collection as a scoped service with the given configuration.
-            services.AddScoped<IOAuthService, OAuthService>(sp => new OAuthService(configuration));
-
-            return services;
-        }
-    }
-}
-```
-
-This Service Collection Extension Method allows user to add the Hattrick OAuth implementation in a single line in their Startup.cs file making it more readable and easy to understand, while also providing the ability to pass in a OAuthServiceConfiguration object to configure the OAuth service.
-
-
 ## Usage Example
 
 To use the library, you will need to add the following line to your `Startup.cs` file:
@@ -68,6 +41,19 @@ You will also need to configure the OAuth settings in your appsettings.json file
 ```
 
 You can then inject the `IOAuthService` into your controllers or services and use it to authenticate and authorize requests to the Hattrick API.
+
+## Methods and Authentication flow
+
+Call the RequestTokenAsync method, passing in a CancellationToken object, to request an OAuth token. 
+This method returns an OAuthRequestResult object, which contains the authorize URL and token secret.
+
+Use the authorize URL to login into Hattrick. The callbackUrl defined will be called, and the token and verifier will be on the query string (you will need them in the next call).
+
+Call the AuthorizeAsync method, passing in the token, verifier, secret (token secret from the RequestToken result), and a CancellationToken object, to authorize the OAuth request. 
+
+This method returns an OAuthAuthorizeResult object, which contains the token and secret that can be used from now on.
+
+In case of any OAuth errors, the methods may throw an OAuthException exception, with the error description provided in the exception message.
 
 
 ## Compatibility
